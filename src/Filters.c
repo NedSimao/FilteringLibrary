@@ -3,20 +3,20 @@
 #include <math.h>
 #include <stdlib.h>
 
-#define PI 3.14159265358f
+#define PI 3.141592653
 
 /********************************************************************************************************
  *                              LOW PASS FILTER
 ********************************************************************************************************/
 
 void LPFilter_Init(LPFilter *filter, float cutoffFreqHz, float sampleTimeS){
-float RC=0.0f;
-RC=1.0f/(2*PI*cutoffFreqHz);
+float RC=0.0;
+RC=1.0/(2*PI*cutoffFreqHz);
 filter->coef[0]=sampleTimeS/(sampleTimeS+RC);
 filter->coef[1]=RC/(sampleTimeS+RC);
 
-filter->v_out[0]=0.0f;
-filter->v_out[1]=0.0f;
+filter->v_out[0]=0.0;
+filter->v_out[1]=0.0;
 
 }
 
@@ -35,16 +35,16 @@ return (filter->v_out[0]);
  *                              HIGH PASS FILTER
 ********************************************************************************************************/
 void HPFilter_Init(HPFilter *filter, float cutoffFreqHz, float sampleTimeS){
-float RC=0.0f;
-RC=1.0f/(2*PIf*cutoffFreqHz);
+float RC=0.0;
+RC=1.0/(2*PI*cutoffFreqHz);
 
 filter->coef=RC/(sampleTimeS+RC);
 
-filter->v_in[0]=0.0f;
-filter->v_in[1]=0.0f;
+filter->v_in[0]=0.0;
+filter->v_in[1]=0.0;
 
-filter->v_out[0]=0.0f;
-filter->v_out[1]=0.0f;
+filter->v_out[0]=0.0;
+filter->v_out[1]=0.0;
 
 }
 
@@ -68,7 +68,7 @@ return (filter->v_out[0]);
 void PBFilter_Init(PBFilter *filter, float HPF_cutoffFreqHz, float LPF_cutoffFreqHz, float sampleTimeS){
 LPFilter_Init(&filter->lpf, LPF_cutoffFreqHz, sampleTimeS);
 HPFilter_Init(&filter->lpf, HPF_cutoffFreqHz, sampleTimeS);
-filter->out_in=0.0f;
+filter->out_in=0.0;
 
 }
 
@@ -87,16 +87,16 @@ return (filter->out_in);
 
 void NOTCHFilter_Init(NOTCHFilter *filter, float centerFreqHz, float notchWidthHz, float sampleTimeS){
 //filter frequency to angular (rad/s)
-float w0_rps=2.0f * PI *centerFreqHz;
-float ww_rps=2.0f * PI *notchWidthHz;
+float w0_rps=2.0 * PI *centerFreqHz;
+float ww_rps=2.0 * PI *notchWidthHz;
 
 //pre warp center frequency
-float w0_pw_rps=(2.0f/sampleTimeS) * tanf(0.5 * w0_rps * sampleTimeS);
+float w0_pw_rps=(2.0/sampleTimeS) * tanf(0.5 * w0_rps * sampleTimeS);
 
 //computing filter coefficients
 
-filter->alpha=4.0f + w0_rps*w0_pw_rps*sampleTimeS*sampleTimeS;
-filter->beta=2.0f*ww_rps*sampleTimeS;
+filter->alpha=4.0 + w0_rps*w0_pw_rps*sampleTimeS*sampleTimeS;
+filter->beta=2.0*ww_rps*sampleTimeS;
 
 //clearing input and output  buffers
 
@@ -118,12 +118,10 @@ float NOTCHFilter_Update(NOTCHFilter *filter, float vin){
     filter->vin[0]=vin;
 
     //compute new output
-    filter->vout[0]=(filter->alpha*filter->vin[0] + 2.0f *(filter->alpha -8.0f)*filter->vin[1] + filter->alpha*filter->vin[2]
-    -(2.0f*(filter->alpha-8.0f)*filter->vout[1]+(filter->alpha-filter->beta)*filter->vout[2]))/(filter->alpha+filter->beta);
+    filter->vout[0]=(filter->alpha*filter->vin[0] + 2.0 *(filter->alpha -8.0)*filter->vin[1] + filter->alpha*filter->vin[2]
+    -(2.0f*(filter->alpha-8.0)*filter->vout[1]+(filter->alpha-filter->beta)*filter->vout[2]))/(filter->alpha+filter->beta);
 
 
     return (filter->vout[0]);
-
-
 }
 

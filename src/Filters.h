@@ -60,4 +60,4 @@ void NOTCHFilter_Init(NOTCHFilter *filter, float centerFreqHz, float notchWidthH
 float NOTCHFilter_Update(NOTCHFilter *filter, float vin);
 
 
-#endif FILTERS_H
+#endif
