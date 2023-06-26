@@ -46,7 +46,18 @@ float PBFilter_Update(PBFilter *filter, float v_in);
  *                              NOTCH FILTER
 ********************************************************************************************************/
 
+typedef struct {
+    float alpha;
+    float beta;
 
+    float vin[3];
+    float vout[3];
+
+}NOTCHFilter;
+
+
+void NOTCHFilter_Init(NOTCHFilter *filter, float centerFreqHz, float notchWidthHz, float sampleTimeS);
+float NOTCHFilter_Update(NOTCHFilter *filter, float vin);
 
 
 #endif FILTERS_H

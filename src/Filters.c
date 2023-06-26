@@ -1,6 +1,9 @@
 
 #include "Filters.h"
+#include <math.h>
+#include <stdlib.h>
 
+#define PI 3.14f
 
 /********************************************************************************************************
  *                              LOW PASS FILTER
@@ -76,3 +79,51 @@ filter->out_in=(&filter->lpf, filter->out_in);
 
 return (filter->out_in);
 }
+
+/********************************************************************************************************
+ *                              NOTCH FILTER
+********************************************************************************************************/
+
+
+void NOTCHFilter_Init(NOTCHFilter *filter, float centerFreqHz, float notchWidthHz, float sampleTimeS){
+//filter frequency to angular (rad/s)
+float w0_rps=2.0f * PI *centerFreqHz;
+float ww_rps=2.0f * PI *notchWidthHz;
+
+//pre warp center frequency
+float w0_pw_rps=(2.0f/sampleTimeS) * tanf(0.5 * w0_rps * sampleTimeS);
+
+//computing filter coefficients
+
+filter->alpha=4.0f + w0_rps*w0_pw_rps*sampleTimeS*sampleTimeS;
+filter->beta=2.0f*ww_rps*sampleTimeS;
+
+//clearing input and output  buffers
+
+for (uint8_t n=0; n<3; n++){
+    filter->vin[n]=0;
+    filter->vout[n]=0;
+}
+
+}
+
+float NOTCHFilter_Update(NOTCHFilter *filter, float vin){
+    //shifting samples
+    filter->vin[2]=filter->vin[1];
+    filter->vin[1]=filter->vin[0];
+
+    filter->vout[2]=filter->vout[1];
+    filter->vout[1]=filter->vout[0];
+
+    filter->vin[0]=vin;
+
+    //compute new output
+    filter->vout[0]=(filter->alpha*filter->vin[0] + 2.0f *(filter->alpha -8.0f)*filter->vin[1] + filter->alpha*filter->vin[2]
+    -(2.0f*(filter->alpha-8.0f)*filter->vout[1]+(filter->alpha-filter->beta)*filter->vout[2]))/(filter->alpha+filter->beta);
+
+
+    return (filter->vout[0]);
+
+
+}
+
