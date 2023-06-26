@@ -3,7 +3,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-#define PI 3.14f
+#define PI 3.14159265358f
 
 /********************************************************************************************************
  *                              LOW PASS FILTER
@@ -11,7 +11,7 @@
 
 void LPFilter_Init(LPFilter *filter, float cutoffFreqHz, float sampleTimeS){
 float RC=0.0f;
-RC=1.0f/(6.28f*cutoffFreqHz);
+RC=1.0f/(2*PI*cutoffFreqHz);
 filter->coef[0]=sampleTimeS/(sampleTimeS+RC);
 filter->coef[1]=RC/(sampleTimeS+RC);
 
@@ -36,7 +36,7 @@ return (filter->v_out[0]);
 ********************************************************************************************************/
 void HPFilter_Init(HPFilter *filter, float cutoffFreqHz, float sampleTimeS){
 float RC=0.0f;
-RC=1.0f/(6.28f*cutoffFreqHz);
+RC=1.0f/(2*PIf*cutoffFreqHz);
 
 filter->coef=RC/(sampleTimeS+RC);
 
