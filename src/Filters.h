@@ -10,7 +10,7 @@ typedef struct {
 }LPFilter;
 
 void LPFilter_Init(LPFilter *filter, float cutoffFreqHz, float sampleTimeS);
-void LPFilter_Update(LPFilter *filter, float v_in);
+float LPFilter_Update(LPFilter *filter, float v_in);
 
 
 /********************************************************************************************************
@@ -23,7 +23,7 @@ typedef struct {
 }HPFilter;
 
 void HPFilter_Init(HPFilter *filter, float cutoffFreqHz, float sampleTimeS);
-void HPFilter_Update(HPFilter *filter, float v_in);
+float HPFilter_Update(HPFilter *filter, float v_in);
 
 
 
@@ -31,10 +31,16 @@ void HPFilter_Update(HPFilter *filter, float v_in);
  *                              BAND PASS FILTER
 ********************************************************************************************************/
 
+typedef struct {
+    LPFilter lpf;
+    HPFilter hpf;
+    float out_in;
+}PBFilter;
 
 
 
-
+void PBFilter_Init(PBFilter *filter, float HPF_cutoffFreqHz, float LPF_cutoffFreqHz, float sampleTimeS);
+float PBFilter_Update(PBFilter *filter, float v_in);
 
 /********************************************************************************************************
  *                              NOTCH FILTER
