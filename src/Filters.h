@@ -20,6 +20,7 @@ typedef struct {
     float coef;
     float v_out[2];
     float v_in[2];
+
 }HPFilter;
 
 void HPFilter_Init(HPFilter *filter, float cutoffFreqHz, float sampleTimeS);

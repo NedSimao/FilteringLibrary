@@ -50,12 +50,16 @@ filter->v_out[1]=0.0;
 
 
 float HPFilter_Update(HPFilter *filter, float v_in){
-filter->v_in[0]=v_in;
+    
 filter->v_in[1]=filter->v_in[0];
+filter->v_in[0]=v_in;
+    
 
 filter->v_out[1]=filter->v_out[0];
 
 filter->v_out[0]=filter->coef * (filter->v_in[0] - filter->v_in[1]+filter->v_out[1]);
+
+
 
 return (filter->v_out[0]);
 }
@@ -67,7 +71,7 @@ return (filter->v_out[0]);
 
 void PBFilter_Init(PBFilter *filter, float HPF_cutoffFreqHz, float LPF_cutoffFreqHz, float sampleTimeS){
 LPFilter_Init(&filter->lpf, LPF_cutoffFreqHz, sampleTimeS);
-HPFilter_Init(&filter->lpf, HPF_cutoffFreqHz, sampleTimeS);
+HPFilter_Init(&filter->hpf, HPF_cutoffFreqHz, sampleTimeS);
 filter->out_in=0.0;
 
 }
@@ -75,7 +79,7 @@ filter->out_in=0.0;
 float PBFilter_Update(PBFilter *filter, float v_in){
 filter->out_in=HPFilter_Update(&filter->hpf, v_in);
 
-filter->out_in=(&filter->lpf, filter->out_in);
+filter->out_in=LPFilter_Update(&filter->lpf, filter->out_in);
 
 return (filter->out_in);
 }
